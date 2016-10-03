@@ -3,6 +3,7 @@ from ..settings import *
 import scrapy
 from scrapy.http import Request
 from ..items import ZhihuuserspiderItem
+import hashlib
 
 
 # 为了创建一个Spider,必须继承scrapy.Spider类
@@ -12,7 +13,9 @@ class ZhiHuUserSpider(scrapy.Spider):
     # 只爬取某个域名
     allowed_domain = ['www.zhihu.com']
     # Spider启动时爬取的第一个url
-    start_url = ['https://www.zhihu.com/people/amberno1111']
+    start_url = [
+        'https://www.zhihu.com/people/amberno1111'
+    ]
     
     def __init__(self, *args, **kwargs):
         """
@@ -66,9 +69,23 @@ class ZhiHuUserSpider(scrapy.Spider):
         item['questions'] = self.base_url + profile[1]
         item['answers'] = self.base_url + profile[2]
         item['articles'] = self.base_url + profile[3]
+        # 使用用户url的hash值作为存储的主键,用来去重
+        # item['_id'] = hashlib.sha1(response.url).hexdigest()
         yield item
+        # 提取用户关注人数所对应的URL, 然后通过回调方法进入下一个页面取到关注的用户列表
+        urls = response.css(
+            'body > div.zg-wrap.zu-main.clearfix > div.zu-main-sidebar > div.zm-profile-side-following.zg-clear > a:nth-child(1)::attr(href)').extract()
+        url = self.base_url + urls[0]
+        yield Request(url=url, callback=self.parse_followees, headers=ZHIHU_HEADER, cookies=ZHIHU_COOKIE)
 
-
-
-
-
+    def parse_followees(self, response):
+        """
+        :summary: 解析用户关注列表页面,提取用户关注的人
+        :param self:
+        :param response:
+        :return:
+        """
+        urls = response.xpath('//div[@class="zm-profile-card zm-profile-section-item zg-clear no-hovercard"]/a/@href').extract()
+        for url in urls:
+            url = self.base_url + url
+            yield Request(url=url, callback=self.parse, headers=ZHIHU_HEADER, cookies=ZHIHU_COOKIE)

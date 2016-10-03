@@ -28,6 +28,7 @@ class ZhihuuserspiderItem(scrapy.Item):
         questions： 提问
         answers： 回答
         articles： 文章
+        _id： 存入数据库时的主键
     """
     username = Field()
     followees = Field()
@@ -43,3 +44,4 @@ class ZhihuuserspiderItem(scrapy.Item):
     questions = Field()
     answers = Field()
     articles = Field()
+    # _id = Field()
