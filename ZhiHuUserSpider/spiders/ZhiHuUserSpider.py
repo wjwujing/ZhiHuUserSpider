@@ -70,7 +70,7 @@ class ZhiHuUserSpider(scrapy.Spider):
         item['answers'] = self.base_url + profile[2]
         item['articles'] = self.base_url + profile[3]
         # 使用用户url的hash值作为存储的主键,用来去重
-        # item['_id'] = hashlib.sha1(response.url).hexdigest()
+        item['_id'] = hashlib.sha1(bytes(response.url, encoding='utf8')).hexdigest()
         yield item
         # 提取用户关注人数所对应的URL, 然后通过回调方法进入下一个页面取到关注的用户列表
         urls = response.css(

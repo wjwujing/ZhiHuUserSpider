@@ -44,4 +44,4 @@ class ZhihuuserspiderItem(scrapy.Item):
     questions = Field()
     answers = Field()
     articles = Field()
-    # _id = Field()
+    _id = Field()

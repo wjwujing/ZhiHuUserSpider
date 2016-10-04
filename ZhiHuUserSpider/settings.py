@@ -67,9 +67,13 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'ZhiHuUserSpider.middlewares.MyCustomDownloaderMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+   # 'ZhiHuUserSpider.middlewares.MyCustomDownloaderMiddleware': 543,
+   # 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+   # 'project_name.middlewares.ProxyMiddleware': 100,
+    'scrapy.contrib.downloadermiddlewares.useragent.UserAgentMiddleware':None,
+    'ZhiHuUserSpider.middlewares.RotateUserAgentMiddleware':400,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
