@@ -39,8 +39,12 @@ class ZhihuuserspiderPipeline(object):
         :param item:
         :return:
         """
-        collection.insert(dict(item))
-        return item
+        try:
+            collection.insert(dict(item))
+            return item
+        except:
+            raise DropItem('用户信息已存在')
+
 
 
 # 以json的格式存储
